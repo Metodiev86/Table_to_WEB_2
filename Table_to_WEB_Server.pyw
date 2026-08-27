@@ -44,13 +44,18 @@ def generate_report(file_path):
 
         report_name = Path(output_file).stem
 
-        if row_count > 10000:
+        if row_count < 10000:
             # Static flow
-            if not messagebox.askokcancel("Внимание",
-                                      "Файлът е много голям. Съдържа над 10 000 реда. При работа с него ще изпитвате, трудности и усезаемо забавяне. желаете ли ве пак дас е генерира отчет?"):
-                return None
-                sys.exit()
             generator.generate_static_report(file_path, df, output_file)
+        else:
+            # Dynamic flow (Heavy Data)
+            db_path = DB_DIR / (report_name + ".sqlite")
+            injector = SQLiteInjector(str(db_path))
+            injector.inject_data(df, report_name)
+            
+            # Generate dynamic template
+            generator.generate_dynamic_template(file_path, df, output_file, report_name)
+            
         return output_file
 
     except Exception as e:
