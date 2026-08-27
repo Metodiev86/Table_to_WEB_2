@@ -1,0 +1,13 @@
+{
+    "title": "Артикули Код",
+    "category": "Номенклатури",
+    "parameters": [
+        {
+            "name": "gGroup",
+            "label": "Група",
+            "type": "select",
+            "default": "ИТТ",
+            "query": "SELECT name as label, code as value\nFROM GoodsGroups\nWHERE LEN(code) = 3\nORDER BY name"
+        }
+    ]
+}

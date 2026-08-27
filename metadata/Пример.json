@@ -1,0 +1,58 @@
+{
+    "title": "Пример",
+    "category": "Справки",
+    "parameters": [
+        {
+            "name": "coeficent",
+            "label": "Коефицент",
+            "type": "number",
+            "default": 4
+        },
+        {
+            "name": "only_positive_request",
+            "label": "Само положителни стойности за заявка",
+            "type": "checkbox",
+            "default": false
+        },
+        {
+            "name": "EndPeriod",
+            "label": "Крайна Дата",
+            "type": "date",
+            "default": "today"
+        },
+        {
+            "name": "StartPeriod",
+            "label": "Начална Дата",
+            "type": "date",
+            "default": "today-120"
+        },
+        {
+            "name": "warehouse",
+            "label": "Склад",
+            "type": "select",
+            "default": "Всички",
+            "options": [
+                {
+                    "value": "Склад 3",
+                    "label": "Склад 3"
+                },
+                {
+                    "value": "Всички",
+                    "label": "Всички"
+                },
+                {
+                    "value": "Офис",
+                    "label": "Офис"
+                },
+                {
+                    "value": "Околовръстно шосе",
+                    "label": "Околовръстно шосе"
+                },
+                {
+                    "value": "Пазарджик",
+                    "label": "Пазарджик"
+                }
+            ]
+        }
+    ]
+}

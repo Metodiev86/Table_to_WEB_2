@@ -1,0 +1,58 @@
+{
+    "title": "Примерна Параметризирана Справка",
+    "category": "Справки",
+    "parameters": [
+        {
+            "name": "StartPeriod",
+            "label": "Начална дата",
+            "type": "date",
+            "default": "today-90"
+        },
+        {
+            "name": "EndPeriod",
+            "label": "Крайна дата",
+            "type": "date",
+            "default": "today"
+        },
+        {
+            "name": "warehouse",
+            "label": "Склад",
+            "type": "select",
+            "default": "Всички",
+            "options": [
+                {
+                    "value": "Всички",
+                    "label": "Всички"
+                },
+                {
+                    "value": "Офис",
+                    "label": "Офис"
+                },
+                {
+                    "value": "Околовръстно шосе",
+                    "label": "Околовръстно шосе"
+                },
+                {
+                    "value": "Склад 3",
+                    "label": "Склад 3"
+                },
+                {
+                    "value": "Пазарджик",
+                    "label": "Пазарджик"
+                }
+            ]
+        },
+        {
+            "name": "coeficent",
+            "label": "Коефициент",
+            "type": "number",
+            "default": 4
+        },
+        {
+            "name": "only_positive_request",
+            "label": "Само положителни стойности за заявка",
+            "type": "checkbox",
+            "default": false
+        }
+    ]
+}

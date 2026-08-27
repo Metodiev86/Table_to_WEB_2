@@ -1,0 +1,73 @@
+{
+    "title": "Количества за Заявка",
+    "category": "Справки",
+    "parameters": [
+        {
+            "name": "StartPeriod",
+            "label": "Начална Дата",
+            "type": "date",
+            "default": "today-120"
+        },
+        {
+            "name": "EndPeriod",
+            "label": "Крайна дата",
+            "type": "date",
+            "default": "today"
+        },
+        {
+            "name": "warehouse",
+            "label": "Склад",
+            "type": "select",
+            "default": "Всички",
+            "options": [
+                {
+                    "value": "Всички",
+                    "label": "Всички"
+                },
+                {
+                    "value": "Околовръстно шосе",
+                    "label": "Околовръстно шосе"
+                },
+                {
+                    "value": "Склад 3",
+                    "label": "Склад 3"
+                },
+                {
+                    "value": "Пазарджик",
+                    "label": "Пазарджик"
+                }
+            ]
+        },
+        {
+            "name": "CoefficientStart",
+            "label": "ForCast_Start",
+            "type": "date",
+            "default": "today"
+        },
+        {
+            "name": "CoefficientEnd",
+            "label": "ForCast_End",
+            "type": "date",
+            "default": "today+10"
+        },
+        {
+            "name": "only_positive_request",
+            "label": "Само положителни стойности за заявка",
+            "type": "checkbox",
+            "default": false
+        },
+        {
+            "name": "gGroup",
+            "label": "Група",
+            "type": "select",
+            "default": "ТЕХНОГИПС",
+            "query": "SELECT name as label, name as value\nFROM GoodsGroups\nWHERE LEN(Code) = 3\n ORDER BY name"
+        },
+        {
+            "name": "ordered",
+            "label": "По Заявка",
+            "type": "checkbox",
+            "default": false
+        }
+    ]
+}

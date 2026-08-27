@@ -1,0 +1,25 @@
+{
+    "title": "Аванс за стока",
+    "category": "Справки",
+    "parameters": [
+        {
+            "name": "select_partner",
+            "label": "Партньор",
+            "type": "select",
+            "default": "ДИАСТЕМА ООД",
+            "query": "SELECT DISTINCT par.Company AS 'label', par.Company AS 'value'\nFROM Payments pay\nLEFT JOIN Documents doc ON pay.Acct = doc.Acct AND doc.OperType = pay.OperType\nLEFT JOIN Partners par ON pay.PartnerID = par.ID\nLEFT JOIN Operations oper ON pay.Acct = oper.Acct AND oper.OperType = pay.OperType\nLEFT JOIN OperationType operType ON pay.OperType = operType.ID\nLEFT JOIN Goods god ON god.ID = oper.GoodID\nLEFT JOIN Objects obj ON obj.Id = oper.ObjectID\nLEFT JOIN Users users ON users.Id = oper.UserID\nWHERE oper.OperType IN (2,16,26,27)\n  AND god.Id = 228\nGROUP BY par.Company"
+        },
+        {
+            "name": "is_all_parnter",
+            "label": "Всички",
+            "type": "checkbox",
+            "default": false
+        },
+        {
+            "name": "not_invoice",
+            "label": "без фактура",
+            "type": "checkbox",
+            "default": false
+        }
+    ]
+}
