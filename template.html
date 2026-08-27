@@ -1,0 +1,452 @@
+<!DOCTYPE html>
+<html lang="bg">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+  <title>Документи</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f5f5f5;
+      margin: 0;
+      padding: 0;
+    }
+    
+    .fixed-header {
+      position: sticky;
+      top: 0;
+      background-color: #e9e9e9;
+      z-index: 100;
+      padding-bottom: 10px;
+      padding-top: 10px;
+      margin-bottom: 10px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1); /* Добавя сянка за по-добър изглед */
+	  height: 60px;
+    }
+
+    .top-bar {
+      background-color: #e9e9e9;
+      padding: 6px 10px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 14px;
+      height: 60px;
+    }
+
+    .filters {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+	 
+    }
+
+    .filter-group {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    label {
+      font-weight: bold;
+    }
+
+   /* Контейнер около селекта */
+	.select-wrapper {
+	  max-height: 140px;       /* до 3 реда */
+	  overflow-y: auto;
+	  width: 200px;
+	   margin-top: 60px;
+	}
+
+	/* Принудително ограничаване височината на избраните елементи */
+	.select2-container--default .select2-selection--multiple .select2-selection__rendered {
+	  max-height: 140px !important;
+	  overflow-y: auto !important;
+	}
+
+	/* Премахване на раздуване на самото поле */
+	.select2-container--default .select2-selection--multiple {
+	  min-height: 60px;
+	  height: auto !important;
+	  overflow: hidden;
+	}
+	
+	.select2-container--default {
+		height: 140px;
+		}
+
+	#select {
+		height: 120px;
+	}
+
+    #clearSearch {
+      cursor: pointer;
+      color: #888;
+      font-weight: bold;
+      margin-right: 5%;
+      display: none; /* Initially hidden */
+    }
+
+    #exportBtn {
+      font-size: 20px;
+      background-color: #05800f;
+      color: white;
+      border: none;
+      cursor: pointer;
+      border-radius: 4px;
+      width: 150px;
+	  height: 60px;
+	  margin-top: -20px;
+    }
+    #exportBtn:hover {
+      background-color: #04600d;
+    }
+
+    .logo-and-info {
+      display: flex;
+      align-items: center;
+      gap: 50px;
+      margin-left: 3%;
+  }
+    .logo-and-info img {
+      width: 400px;
+      height: 100px;
+	  margin-top: -10px;
+    }
+    .company-info {
+      font-size: 30px;
+      color: #0002f6;
+      font-family: 'Times New Roman', Times, serif;
+	  text-align: center;
+      font-weight: bold;
+      text-wrap: nowrap;
+	  margin-top: -10px;
+    }
+
+    .summary {
+      font-weight: bold;
+      text-align: right;
+      margin-left: 80%;
+      text-wrap: nowrap;
+      font-size: 20px;
+      text-align: right;
+      color: #02021d9f;
+      position: fixed;
+    }
+	
+
+    .summary span {
+      color: #0002f6;
+      font-size: 20px;
+      font-weight: bold;
+      border: #0002f6 5px solid;
+	  padding: 5px;
+    }
+
+    #clearBtn {
+      padding: 4px 8px;
+      font-size: 20px;
+      background-color: #f44336;
+      color: white;
+      border: none;
+      cursor: pointer;
+      border-radius: 4px;
+      width: 30%;
+	  height: 41px;
+      margin-top: 5%;
+    }
+    
+    #clearBtn:hover {
+      background-color: #d32f2f;
+    }
+
+    .table-container {
+      padding: 10px;
+    }
+
+    table {
+      border-collapse: collapse;
+      width: 100%;
+      table-layout: fixed;
+    }
+
+    th,
+    td {
+      border: 1px solid #ccc;
+      padding: 6px;
+      text-align: left;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    th {
+      background-color: #f0f0f0;
+      text-align: center;
+    }
+
+    tr.selected {
+      background-color: #d0f0d0 !important;
+    }
+
+    .highlight {
+      background-color: yellow;
+    }
+    
+	table th:last-child,
+    table td:last-child {
+    display: none;
+  }
+   
+  /* Responsive styles */
+ 
+ @media (max-width: 768px) {
+     
+	 .company-info {
+      display: none;
+    }
+
+    #exportBtn {
+      display: none;
+    }
+	
+	.logo-and-info img {
+		display: none;
+    }
+	
+  #text_calculate {
+	display: none;
+	}
+	
+	/* Контейнер около селекта */
+	.select-wrapper {
+	  max-height: 120px;       /* до 3 реда */
+	  overflow-y: auto;
+	  width: 200px;
+	 margin-top: -10px;
+	}
+
+	/* Принудително ограничаване височината на избраните елементи */
+	.select2-container--default .select2-selection--multiple .select2-selection__rendered {
+	  max-height: 80px !important;
+	  overflow-y: auto !important;
+	}
+
+	/* Премахване на раздуване на самото поле */
+	.select2-container--default .select2-selection--multiple {
+	  min-height: 60px;
+	  height: auto !important;
+	  overflow: hidden;
+	}
+	
+	.select2-container--default {
+		height: 80px;
+		}
+		
+	#select {
+		height: 80px;
+		margin-top: -40px;
+	}
+	.summary-actions {
+		margin-left: -130px;
+		margin-top: -40px;
+  }
+ 
+  </style>
+</head>
+<body>
+<div class="fixed-header">
+  <div class="top-bar">
+    <div class="filters">
+      <div class="filter-group">
+        <!--<label for="search">Търсене:</label> -->
+        <div class="select-wrapper">
+			<select id="search" multiple style="width: 100%;"></select>
+		</div>
+        <span id="clearSearch">×</span>
+        <button id="exportBtn" onclick="exportVisibleToExcel()">📤 Експортирай</button>
+      </div>
+      <div class="logo-and-info">
+          <img class="logo-and-info img" src="stabil_di_Caption.png" alt="Лого">
+          <div class="company-info">
+           Част от група дружества<br><span style="font-style: italic;">Деан Стоянов</span>
+          </div>
+		  </div>
+          <div class="summary">
+            <span id="text_calculate">Маркирани документи: </span>
+            <div class="summary-actions">
+				<span id="sumSelected">0.00 €</span>
+              <button id="clearBtn" onclick="clearSelection()">❌</button>
+            </div>
+          </div>
+      
+    </div>
+  </div>
+</div>
+  <div class="table-container">
+    <!--MAIN_TABLE_HERE-->
+  </div>
+
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+
+<script>
+    document.addEventListener("click", function (e) {
+      const target = e.target;
+      if (target.tagName === "TD") {
+        const row = target.parentElement;
+        row.classList.toggle("selected");
+        updateSelectedSum();
+      }
+    });
+
+    function updateSelectedSum() {
+      let sum = 0;
+      const rows = document.querySelectorAll("table tbody tr.selected");
+      rows.forEach(row => {
+        const cellText = row.cells[3]?.innerText.replace(/[^\-\d.,]/g, "").replace(",", ".");
+        const value = parseFloat(cellText);
+        if (!isNaN(value)) {
+          sum += value;
+        }
+      });
+      document.getElementById("sumSelected").innerText = sum.toFixed(2) + " €";
+    }
+  </script>
+
+<script>
+  const input = document.getElementById("search");
+  const clearBtn = document.getElementById("clearSearch");
+
+  input.addEventListener("input", () => {
+    clearBtn.style.display = input.value ? "inline" : "none";
+  });
+
+  clearBtn.addEventListener("click", () => {
+    input.value = "";
+    clearBtn.style.display = "none";
+    filterTable(); // активира търсачката с празно поле
+  });
+</script>
+
+<script>
+  function exportVisibleToExcel() {
+  const table = document.querySelector("table");  // или замести със selector-а си
+  const headers = Array.from(table.querySelectorAll("thead th"))
+    .slice(0, -1)
+    .map(th => th.innerText);
+
+  const visibleRows = Array.from(table.querySelectorAll("tbody tr"))
+    .filter(row => row.style.display !== "none")
+    .map(row => {
+      const cells = Array.from(row.querySelectorAll("td"));
+      const selectedCells = cells.slice(0, -1).map(td => td.innerText);
+
+      // Преобразуваме последната видима стойност в число
+      const lastIndex = selectedCells.length - 1;
+      if (lastIndex >= 0) {
+        let val = selectedCells[lastIndex]
+          .replace(/\s+/g, "")         // махаме интервали (напр. 1 234)
+          .replace("лв.", "")          // махаме "лв."
+          .replace(",", ".")          // запетая → точка
+		  .replace("€", "")   ;       // махаме "€"
+
+        const num = parseFloat(val);
+        if (!isNaN(num)) selectedCells[lastIndex] = num;
+      }
+
+      return selectedCells;
+    });
+
+  if (visibleRows.length === 0) {
+    alert("Няма видими редове за експортиране.");
+    return;
+  }
+
+  const data = [headers, ...visibleRows];
+
+  const ws = XLSX.utils.aoa_to_sheet(data);
+  const wb = XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb, ws, "Таблица");
+
+  XLSX.writeFile(wb, "таблица.xlsx");
+}
+</script>
+<script>
+  function clearSelection() {
+    const selectedRows = document.querySelectorAll("table tbody tr.selected");
+    selectedRows.forEach(row => row.classList.remove("selected"));
+    updateSelectedSum();
+  }
+  </script>
+ 
+ <script>
+$(document).ready(function () {
+  const $select = $('#search');
+  const allNames = new Set();       // Всички уникални имена
+  const namesForSelect = new Set(); // Само тези, които не завършват на 'общо:'
+
+  // 1. Извличане на всички имена от първата колона
+  $('table tbody tr').each(function () {
+    const name = $(this).find('td').eq(0).text().trim();
+    if (name) {
+      allNames.add(name);
+
+      // Пропускаме тези, които завършват на 'общо:'
+      if (!name.toLowerCase().endsWith('общо:')) {
+        namesForSelect.add(name);
+      }
+    }
+  });
+
+  // 2. Добавяне във <select> само валидните за избор
+  namesForSelect.forEach(name => {
+    $select.append(new Option(name, name));
+  });
+
+  // 3. Инициализация на Select2
+  $select.select2({
+    placeholder: "Избери контрагент(и)",
+    allowClear: true,
+    width: 'resolve',
+    dropdownAutoWidth: true,
+    closeOnSelect: false,
+    maximumSelectionLength: 100
+  });
+
+  // 4. Филтриране
+  $select.on('change', function () {
+    const selected = $(this).val(); // масив с избрани
+
+    $('table tbody tr').each(function () {
+      const rowName = $(this).find('td').eq(0).text().trim();
+
+      // Ако няма селекция, показваме всичко
+      if (!selected || selected.length === 0) {
+        $(this).show();
+        return;
+      }
+
+      // Проверка: дали някое от избраните съвпада с началото на реда (за да включим и "общо:")
+      const shouldShow = selected.some(sel => rowName.startsWith(sel));
+      $(this).toggle(shouldShow);
+    });
+  });
+
+  // 5. Вътрешен скрол при много избрани
+  $('.select2-selection__rendered').css({
+    'max-height': '60px',
+    'overflow-y': 'auto'
+  });
+});
+</script>
+
+
+</body>
+
+</html>
