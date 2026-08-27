@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="bg">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Табло с Отчети</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    <style>
+        :root {
+            --primary-blue: #0033cc;
+            --secondary-blue: #0044ee;
+            --bg-light: #f4f7f6;
+        }
+        body { 
+            background-color: var(--bg-light); 
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-size: 17px;
+            scroll-behavior: smooth;
+        }
+        .navbar {
+            background-color: rgba(255, 255, 255, 0.95) !important;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+            border-bottom: 3px solid var(--primary-blue);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
+        /* Sidebar Styles */
+        .sidebar {
+            width: 280px;
+            position: sticky;
+            top: 80px;
+            height: calc(100vh - 80px);
+            overflow-y: auto;
+            background: #fff;
+            border-right: 1px solid rgba(0,0,0,0.05);
+            box-shadow: 4px 0 15px rgba(0,0,0,0.02);
+            padding: 20px 15px;
+            display: none; /* Hidden by default, shown on md+ */
+            z-index: 900;
+        }
+        /* Custom scrollbar for sidebar */
+        .sidebar::-webkit-scrollbar {
+            width: 4px;
+        }
+        .sidebar::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        .sidebar::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 10px;
+        }
+        .sidebar::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8;
+        }
+        @media (min-width: 992px) {
+            .sidebar { display: block; }
+        }
+        .sidebar-title {
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            color: #adb5bd;
+            margin-bottom: 20px;
+            padding-left: 10px;
+            font-weight: 700;
+        }
+        .sidebar-link {
+            display: flex;
+            align-items: center;
+            padding: 12px 15px;
+            color: #475569;
+            text-decoration: none !important;
+            border-radius: 10px;
+            margin-bottom: 6px;
+            transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+        .sidebar-link:hover {
+            background-color: #1e293b;
+            color: #f8fafc !important;
+            transform: translateX(4px);
+        }
+        .sidebar-link i, .sidebar-link .nav-icon {
+            margin-right: 12px;
+            font-size: 1.25rem;
+            width: 28px;
+            text-align: center;
+        }
+        .app-layout {
+            display: flex;
+            align-items: flex-start;
+            width: 100%;
+        }
+        .main-content {
+            flex: 1;
+            min-width: 0;
+            padding: 30px 40px; /* Space for the cards */
+        }
+        @media (max-width: 991px) {
+            .main-content { padding: 20px; }
+        }
+        .category-section {
+            scroll-margin-top: 100px;
+        }
+        .category-header {
+            cursor: pointer;
+            padding: 18px 30px;
+            background: #fff;
+            border-radius: 16px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            border-left: 8px solid var(--primary-blue);
+        }
+        .category-header:hover {
+            background-color: #fcfcfc;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 18px rgba(0,0,0,0.08);
+        }
+        .category-header h5 {
+            font-size: 1.5rem !important; /* Even larger */
+            font-weight: 800;
+            color: #0f172a;
+            letter-spacing: -0.5px;
+        }
+        .category-icon {
+            font-size: 2rem !important; /* Even larger */
+            margin-right: 20px;
+            filter: drop-shadow(0 2px 4px rgba(0,0,0,0.1));
+        }
+        .navbar-brand {
+            color: var(--primary-blue) !important;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+        }
+        .navbar-brand img {
+            max-height: 40px;
+            margin-right: 15px;
+        }
+        .category-header .arrow {
+            transition: transform 0.3s;
+            font-size: 0.8rem;
+        }
+        .category-header.collapsed .arrow {
+            transform: rotate(-90deg);
+        }
+        .report-card { 
+            border: none;
+            border-radius: 8px;
+            transition: all 0.3s cubic-bezier(.25,.8,.25,1); 
+            cursor: pointer; 
+            overflow: hidden;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+        .report-card:hover { 
+            transform: translateY(-4px); 
+            box-shadow: 0 8px 16px rgba(0,0,0,0.15); 
+        }
+        .card-body {
+            padding: 8px 12px;
+        }
+        .card-title {
+            color: #333;
+            font-weight: 700;
+            margin-bottom: 4px;
+            font-size: 1.05rem;
+            line-height: 1.2;
+        }
+        .badge-dynamic { 
+            background-color: var(--primary-blue);
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 0.75rem;
+        }
+        .badge-static { 
+            background-color: #28a745; 
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 0.75rem;
+        }
+        .badge-live { 
+            background-color: #dc3545; 
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            color: white;
+            animation: pulse-red 2s infinite;
+        }
+        .badge-secret {
+            background-color: #6f42c1;
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            color: white;
+        }
+        @keyframes pulse-red {
+            0% { box-shadow: 0 0 0 0 rgba(220, 53, 69, 0.4); }
+            70% { box-shadow: 0 0 0 10px rgba(220, 53, 69, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(220, 53, 69, 0); }
+        }
+        .card-footer {
+            padding-top: 0 !important;
+            padding-bottom: 8px !important;
+            border: none !important;
+        }
+        .btn-open {
+            background-color: var(--primary-blue);
+            color: white;
+            border-radius: 15px;
+            padding: 2px 10px;
+            font-weight: 600;
+            font-size: 0.75rem;
+            transition: all 0.3s;
+        }
+        .btn-open:hover {
+            background-color: var(--secondary-blue);
+            color: white;
+            box-shadow: 0 2px 6px rgba(0,51,204,0.3);
+        }
+        .footer-text {
+            color: #888;
+            font-size: 0.8rem;
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar navbar-light mb-0">
+        <div class="container-fluid px-4">
+            <a class="navbar-brand" href="/">
+                <img src="{{ url_for('static', filename='img/logo.png') }}" alt="Logo">
+                <span>ПОРТАЛ ЗА ОТЧЕТИ</span>
+            </a>
+            <div class="d-flex align-items-center">
+                <span class="text-muted small fw-bold">СТАБИЛ-ДИ ЕООД</span>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container-fluid px-0">
+        <div class="app-layout">
+            <!-- Sidebar Navigation -->
+            <nav class="sidebar">
+                <div class="sidebar-title">Категории</div>
+                {% for category, reports in grouped_reports %}
+                <a href="#cat_{{ loop.index }}" class="sidebar-link">
+                    <span class="nav-icon">{{ CATEGORY_META[category].icon if category in CATEGORY_META else "📂" }}</span>
+                    <span>{{ category }}</span>
+                </a>
+                {% endfor %}
+            </nav>
+
+            <!-- Main Content Area -->
+            <main class="main-content">
+                {% for category, reports in grouped_reports %}
+                {% set cat_id = "cat_" + loop.index|string %}
+                <div class="category-section mb-5" id="{{ cat_id }}">
+                    <div class="category-header mb-4" data-bs-toggle="collapse" data-bs-target="#content_{{ cat_id }}" aria-expanded="true">
+                        <h5 class="m-0 d-flex align-items-center">
+                            <span class="category-icon">{{ CATEGORY_META[category].icon if category in CATEGORY_META else "📂" }}</span>
+                            {{ category }}
+                            <span class="badge bg-light text-dark ms-3 rounded-pill small" style="font-size: 0.7rem;">{{ reports|length }}</span>
+                        </h5>
+                        <span class="arrow">▼</span>
+                    </div>
+
+                    <div class="collapse show" id="content_{{ cat_id }}">
+                        <div class="row row-cols-1 row-cols-sm-2 row-cols-md-2 row-cols-lg-3 row-cols-xl-4 g-3">
+                            {% for report in reports %}
+                            <div class="col">
+                                {% if report.is_live %}
+                                    {% set report_url = url_for('serve_live_report', report_name=report.name) %}
+                                {% else %}
+                                    {% set report_url = url_for('serve_report', filename=report.filename) %}
+                                {% endif %}
+                                
+                                {% if access_level in ('private', 'secret') %}
+                                    {% set report_url = report_url + '?key=' + request.args.get('key', '') %}
+                                {% endif %}
+
+                                <div class="card report-card" onclick="window.open('{{ report_url }}', '_blank')" title="{{ report.name }}">
+                                    <div class="card-body">
+                                        <h5 class="card-title" title="{{ report.name }}">{{ report.name }}</h5>
+                                        <div class="mb-2">
+                                            {% if report.is_live %}
+                                                <span class="badge badge-live">Live</span>
+                                            {% endif %}
+                                            {% if report.has_db %}
+                                                <span class="badge badge-dynamic">Динамичен</span>
+                                            {% else %}
+                                                <span class="badge badge-static">Статичен</span>
+                                            {% endif %}
+                                            {% if report.is_secret %}
+                                                <span class="badge badge-secret ms-1">🔐 Секретен</span>
+                                            {% elif report.is_private %}
+                                                <span class="badge bg-warning text-dark ms-1">🔒 Личен</span>
+                                            {% endif %}
+                                        </div>
+                                    </div>
+                                    <div class="card-footer bg-transparent d-flex justify-content-between align-items-center">
+                                        <span class="footer-text">
+                                            <i class="bi bi-clock"></i> 
+                                            {% if report.is_live %}
+                                                Обновено: {{ report.created }}
+                                            {% else %}
+                                                {{ report.created if report.created else "Днес" }}
+                                            {% endif %}
+                                        </span>
+                                        <a href="{{ report_url }}" target="_blank" class="btn btn-sm btn-open" onclick="event.stopPropagation();">
+                                            Отвори
+                                        </a>
+                                    </div>
+                                </div>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+
+                {% if not grouped_reports %}
+                <div class="text-center py-5">
+                    <p class="text-muted">Няма открити отчети в папката output.</p>
+                </div>
+                {% endif %}
+            </main>
+        </div>
+    </div>
+</div>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
