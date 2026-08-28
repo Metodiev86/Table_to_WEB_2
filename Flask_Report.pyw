@@ -691,7 +691,7 @@ def api_get_stats(report_name):
 if __name__ == '__main__':
     # Стартираме Flask в отделна нишка (Thread)
     # Задаваме use_reloader=False, за да не се рестартира трей иконата при промяна на кода
-    threading.Thread(target=lambda: app.run(host="0.0.0.0", debug=True, port=5010, use_reloader=False), daemon=True).start()
+    threading.Thread(target=lambda: app.run(host="0.0.0.0", debug=False, port=5010, use_reloader=False), daemon=True).start()
     
     # Стартираме иконата в системния трей (blocking)
     run_tray()
